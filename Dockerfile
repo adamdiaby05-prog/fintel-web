@@ -1,15 +1,9 @@
-# Dockerfile pour Fintel Web - Laravel
+# Dockerfile pour Fintel Web - Laravel avec Nginx
 FROM php:8.2-fpm
 
-# Arguments de build
-ARG USER_ID=1000
-ARG GROUP_ID=1000
-
-# Définir le répertoire de travail
-WORKDIR /var/www/html
-
-# Installer les dépendances système
+# Installer Nginx et les dépendances système
 RUN apt-get update && apt-get install -y \
+    nginx \
     git \
     curl \
     libpng-dev \
@@ -24,6 +18,9 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Définir le répertoire de travail
+WORKDIR /var/www/html
+
 # Copier les fichiers de l'application
 COPY . /var/www/html
 
@@ -36,9 +33,15 @@ RUN chown -R www-data:www-data /var/www/html \
 # Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Exposer le port 9000 pour PHP-FPM
-EXPOSE 9000
+# Copier la configuration Nginx
+COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+
+# Copier le script de démarrage
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Exposer le port 80 pour Nginx
+EXPOSE 80
 
 # Commande par défaut
-CMD ["php-fpm"]
-
+CMD ["/start.sh"]

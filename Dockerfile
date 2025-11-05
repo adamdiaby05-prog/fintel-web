@@ -40,9 +40,6 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Générer la clé d'application si elle n'existe pas (sera écrasée par .env si défini)
-RUN php artisan key:generate --ansi || true
-
 # Exposer le port 80 pour Nginx
 EXPOSE 80
 

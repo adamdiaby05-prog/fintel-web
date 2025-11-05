@@ -99,3 +99,5 @@ Si des migrations sont nécessaires après le déploiement:
 - Le host de la base de données utilise le nom interne du service Dokploy: `fintel-db-nez1ib`
 - N'oubliez pas d'exécuter `database_setup_complete.sql` avant le premier déploiement
 - Les logs sont disponibles dans la section "Logs" de Dokploy
+
+

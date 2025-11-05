@@ -144,3 +144,5 @@ Exécutez le script SQL `database_setup_complete.sql` dans votre base de donnée
 ### Erreur de session
 - Assurez-vous que `SESSION_DRIVER=database` est défini
 - Assurez-vous que la table `sessions` existe dans la base de données
+
+

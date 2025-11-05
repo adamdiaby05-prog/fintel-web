@@ -140,3 +140,89 @@ tail -f storage/logs/laravel.log
 ## 📄 Licence
 
 Propriétaire - Fintel
+
+#### Inscription
+- URL: http://localhost:8000/register
+- Champs requis:
+  - Numéro de téléphone (unique)
+  - Mot de passe (minimum 6 caractères)
+  - Confirmation du mot de passe
+  - Acceptation des conditions d'utilisation
+- Champs optionnels:
+  - Email
+  - Prénom
+  - Nom
+
+#### Connexion
+- URL: http://localhost:8000/login
+- Authentification par numéro de téléphone et mot de passe
+
+#### Tableau de bord
+- URL: http://localhost:8000/dashboard
+- Affichage des informations utilisateur
+- Bouton de déconnexion
+
+### Modèle User
+
+Le modèle User a été adapté pour correspondre au schéma PostgreSQL existant:
+
+**Champs principaux:**
+- `phone_number` - Numéro de téléphone (unique, requis)
+- `hashed_password` - Mot de passe hashé
+- `email` - Email (unique, optionnel)
+- `first_name` - Prénom
+- `last_name` - Nom
+- `is_active` - Statut actif
+- `is_verified` - Statut vérifié
+- `terms_accepted` - Acceptation des conditions
+
+## Structure
+
+```
+fintel-web/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       └── AuthController.php    # Contrôleur d'authentification
+│   └── Models/
+│       └── User.php                   # Modèle User adapté
+├── resources/
+│   └── views/
+│       ├── auth/
+│       │   ├── login.blade.php        # Page de connexion
+│       │   └── register.blade.php     # Page d'inscription
+│       ├── layouts/
+│       │   └── app.blade.php          # Layout principal
+│       └── dashboard.blade.php        # Tableau de bord
+├── routes/
+│   └── web.php                        # Routes de l'application
+└── .env                               # Configuration environnement
+```
+
+## Dépendances
+
+- PHP 8.2+
+- Composer
+- PostgreSQL avec extension pdo_pgsql
+- Laravel 12
+
+## Notes importantes
+
+1. **Mot de passe:** Le champ utilisé dans la base est `hashed_password`, pas `password`
+2. **Authentification:** L'authentification se fait par `phone_number`, pas par email
+3. **Base de données:** La base PostgreSQL doit être accessible avec les identifiants configurés
+4. **Sessions:** Les sessions utilisent la base de données PostgreSQL
+
+## Développement
+
+Pour tester l'application:
+
+1. Démarrer le serveur: `php artisan serve`
+2. Accéder à http://localhost:8000
+3. S'inscrire avec un nouveau numéro de téléphone
+4. Se connecter avec les identifiants créés
+5. Accéder au tableau de bord
+
+## Support
+
+Pour toute question ou problème, consultez la documentation Laravel ou contactez l'équipe de développement.

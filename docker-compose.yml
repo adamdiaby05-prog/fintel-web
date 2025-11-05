@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Application Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fintel-web-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./storage:/var/www/html/storage
+    networks:
+      - fintel-network
+    depends_on:
+      - postgres
+    environment:
+      - APP_ENV=local
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=fintel
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: fintel-web-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - fintel-network
+    depends_on:
+      - app
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: fintel-web-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=fintel
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database_setup_complete.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fintel-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  fintel-network:
+    driver: bridge
+

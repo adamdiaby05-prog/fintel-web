@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libpq-dev \
+    net-tools \
     && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -35,6 +36,12 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Copier la configuration Nginx
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+
+# Copier la configuration PHP-FPM pour forcer l'écoute TCP
+COPY docker/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+# Créer le lien symbolique pour activer le site Nginx
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 # Copier le script de démarrage
 COPY start.sh /start.sh

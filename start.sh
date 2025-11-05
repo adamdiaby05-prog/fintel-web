@@ -79,8 +79,36 @@ php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
 
+# Vérifier que PHP-FPM peut démarrer
+php-fpm -t || echo "Warning: PHP-FPM configuration test failed"
+
+# Démarrer PHP-FPM en arrière-plan
+php-fpm -D
+
+# Attendre un peu pour que PHP-FPM démarre
+sleep 2
+
+# Vérifier que PHP-FPM écoute sur le port 9000
+if ! netstat -tuln | grep -q ":9000"; then
+    echo "Error: PHP-FPM is not listening on port 9000"
+    exit 1
+fi
+
+# Vérifier la configuration Nginx
+nginx -t || echo "Warning: Nginx configuration test failed"
+
 # Démarrer Nginx en arrière-plan
 service nginx start
 
-# Démarrer PHP-FPM en avant-plan
-exec php-fpm
+# Vérifier que Nginx écoute sur le port 80
+if ! netstat -tuln | grep -q ":80"; then
+    echo "Error: Nginx is not listening on port 80"
+    exit 1
+fi
+
+echo "✅ Nginx and PHP-FPM started successfully"
+echo "Nginx is listening on port 80"
+echo "PHP-FPM is listening on port 9000"
+
+# Garder le conteneur en vie
+tail -f /var/log/nginx/error.log /var/log/nginx/access.log 2>/dev/null || sleep infinity

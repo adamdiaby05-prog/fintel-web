@@ -30,6 +30,11 @@
         .mobile-toggle { display: none; border: none; background: transparent; font-size: 1.4rem; padding: 8px; cursor: pointer; }
         .content-area { padding: 16px; }
 
+        /* Force visible on desktop */
+        @media (min-width: 993px) {
+            .sidebar { transform: translateX(0) !important; }
+        }
+
         @media (max-width: 992px) {
             body { overflow-x: hidden; }
             .sidebar { transform: translateX(-100%); }
@@ -48,7 +53,7 @@
     </style>
 </head>
 <body>
-    <div class="sidebar closed" id="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div>
                 <h1>🚀 Fintel</h1>
